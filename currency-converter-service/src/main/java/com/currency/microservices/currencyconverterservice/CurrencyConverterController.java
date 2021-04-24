@@ -1,10 +1,13 @@
 package com.currency.microservices.currencyconverterservice;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 @RestController
 public class CurrencyConverterController {
@@ -12,7 +15,16 @@ public class CurrencyConverterController {
 	@GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
 	public CurrencyConveter getConvertedCurrency(@PathVariable String from, @PathVariable String to,@PathVariable BigDecimal quantity)
 	{
-		return new CurrencyConveter(1001L, from, to, BigDecimal.ONE, BigDecimal.ONE, BigDecimal.ONE, "8000");
+		HashMap<String, String> uriVariables = new HashMap<>();
+		uriVariables.put("from", from);
+		uriVariables.put("to", to);
+		// making a call to another microservice :  currencyExchange
+		
+		ResponseEntity<CurrencyConveter> responseEntity = new RestTemplate().getForEntity("http://localhost:8000/currency-exchange/from/{from}/to/{to}",CurrencyConveter.class, uriVariables);
+		
+		CurrencyConveter response = responseEntity.getBody();
+		
+		return new CurrencyConveter(response.getId(), from, to, quantity, response.getConversionMultiple(), quantity.multiply(response.getConversionMultiple()), response.getEnvoirnmnent());
 	}
 
 }
