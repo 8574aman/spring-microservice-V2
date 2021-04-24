@@ -2,11 +2,23 @@ package com.currency.microservices.currencyexchangeservice;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
+
+@Entity
 public class CurrencyExchange {
+
+@Id
 private Long id;
+
+@Column(name="currency_from") // since "from" is a keyword in SQL so it will throw a syntax error while creating a table 
 private String from;
+@Column(name="currency_to")
 private String to;
 private BigDecimal conversionMultiple;
+@Transient
 private String envoirnmnent;
 public Long getId() {
 	return id;
