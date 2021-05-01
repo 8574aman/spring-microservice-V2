@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 // this interface creates a FeignClient which will talk to the currency Exchnage service.
-@FeignClient(name="currency-exchange", url="localhost:8000")
+@FeignClient(name="currency-exchange")
 public interface CurrencyExchangeProxy {
 	
 	// we have to provide definition of the method to call from the Currency-Exchange service
