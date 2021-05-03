@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 
 @RestController
@@ -25,6 +26,17 @@ public class CircuitBreakerController {
 		ResponseEntity<String> res = new RestTemplate().getForEntity("http://localhost:8222/dummy-url", String.class);
 		return res.getBody();
 	}
+
+	@GetMapping("/sample-api-circuitbreaker")
+	@CircuitBreaker(name = "default"  
+		   ,fallbackMethod = "hardCodedFallBackMethod") // fallbackmethod will be called in case when we dont get response from the API.
+	public String sampleApiCircuit()
+	{
+		logger.info("Try hitting dummy-url {}",++counter);
+		ResponseEntity<String> res = new RestTemplate().getForEntity("http://localhost:8222/dummy-url", String.class);
+		return res.getBody();
+	}
+
 	
 	private String hardCodedFallBackMethod(Exception ex)
 	{
