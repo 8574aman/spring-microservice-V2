@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 
 @RestController
@@ -30,6 +32,9 @@ public class CircuitBreakerController {
 	@GetMapping("/sample-api-circuitbreaker")
 	@CircuitBreaker(name = "default"  
 		   ,fallbackMethod = "hardCodedFallBackMethod") // fallbackmethod will be called in case when we dont get response from the API.
+	//@RateLimiter(name = "default") // this only allows 10,000 request in 10seconds limits the rate we can configure this.
+	//@Bulkhead(name = "default")   // we can limit the max concurrent request that can be made to the ahead MS.
+	// comment the CircuitBreaker mapping if you want to use the above two.
 	public String sampleApiCircuit()
 	{
 		logger.info("Try hitting dummy-url {}",++counter);
