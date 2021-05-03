@@ -29,7 +29,7 @@ public CurrencyExchange getExchangeValue(@PathVariable String from, @PathVariabl
 
 	currencyExchange.setEnvoirnmnent(port);  // setting the cuurent port value to the response.
 	
-	return currencyExchange;
+	return currencyExchange;   
 }
 
 }
