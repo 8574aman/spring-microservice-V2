@@ -10,9 +10,13 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - rabbitmq
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
           
   currency-converter:
     image: amandockerhub/msv2-currency-converter-service:0.0.1-SNAPSHOT
@@ -23,9 +27,13 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - rabbitmq      
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
 
   api-gateway:
     image: amandockerhub/msv2-api-gateway:0.0.1-SNAPSHOT
@@ -36,9 +44,13 @@ services:
       - currency-network
     depends_on:
       - naming-server
+      - rabbitmq      
     environment:
       EUREKA.CLIENT.SERVICEURL.DEFAULTZONE: http://naming-server:8761/eureka
       SPRING.ZIPKIN.BASEURL: http://zipkin-server:9411/
+      SPRING_ZIPKIN_SENDER_TYPE: rabbit
+      SPRING_RABBITMQ_HOST: rabbitmq
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
 
   naming-server:
     image: amandockerhub/msv2-naming-server:0.0.1-SNAPSHOT
@@ -56,6 +68,20 @@ services:
     mem_limit: 300m
     ports:
       - "9411:9411"
+    networks:
+      - currency-network
+    depends_on:
+      - rabbitmq        
+    environment:
+      RABBIT_URI: amqp://guest:guest@rabbitmq:5672
+    restart : always      # restart the container if it fails to run
+
+  rabbitmq:
+    image: rabbitmq:3.8.12-management #earlier, this image rabbitmq:3.5.3-management was giving exception in starting     
+    mem_limit: 300m
+    ports:
+      - "5672:5672"
+      - "15672:15672"
     networks:
       - currency-network
 
